@@ -5,6 +5,7 @@ import example.com.auth.dto.AuthResponse;
 import example.com.auth.security.SecurityUtil;
 import example.com.common.apiPayload.ApiResponse;
 import example.com.common.apiPayload.code.status.SuccessStatus;
+import example.com.member.domain.Friend;
 import example.com.member.domain.Member;
 import example.com.member.dto.MemberRequest;
 import example.com.member.dto.MemberResponse;
@@ -17,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,6 +43,15 @@ public class MemberController {
         AuthResponse.loginDto loginDto = authService.login(member.getSocialId(), member.getLoginType().toString());
 
         return ApiResponse.of(SuccessStatus.JOIN_SUCCESS, loginDto);
+    }
+
+    @GetMapping("/friends")
+    public ApiResponse<Object> getFriends() {
+        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
+
+        List<Friend> friends = memberService.getFriends(member);
+
+        return ApiResponse.onSuccess(MemberConverter.toFriendListDto(friends));
     }
 
     @GetMapping("/test")

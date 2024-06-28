@@ -1,13 +1,14 @@
 package example.com.member.dto;
 
+import example.com.member.domain.Gender;
+import example.com.member.domain.LoginType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import example.com.member.domain.Gender;
-import example.com.member.domain.LoginType;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class MemberResponse {
 
@@ -33,5 +34,25 @@ public class MemberResponse {
         Long studyTypeId;
         String studyTypeTitle;
     }
+
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class friendListDto {
+        List<friendInfoDto> friendInfoDtoList;
+    }
+
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class friendInfoDto {
+        Long memberId;
+        String name;
+    }
+
 
 }
