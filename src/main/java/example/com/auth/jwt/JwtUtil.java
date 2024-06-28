@@ -1,5 +1,8 @@
 package example.com.auth.jwt;
 
+import example.com.common.apiPayload.code.status.ErrorStatus;
+import example.com.common.apiPayload.exception.JwtAuthenticationException;
+import example.com.member.domain.RoleType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -8,9 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import example.com.common.apiPayload.code.status.ErrorStatus;
-import example.com.common.apiPayload.exception.JwtAuthenticationException;
-import example.com.member.domain.RoleType;
 
 import java.security.Key;
 import java.util.Date;
@@ -26,7 +26,7 @@ public class JwtUtil {
 
     public JwtUtil(
             @Value("${jwt.secret}") String secretKey,
-            @Value("${jwt.access_expiration_time}") long accessTokenExpTime
+            @Value("600000") long accessTokenExpTime
     ) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
