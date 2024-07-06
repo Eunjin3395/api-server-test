@@ -45,15 +45,6 @@ public class MemberController {
         return ApiResponse.of(SuccessStatus.JOIN_SUCCESS, loginDto);
     }
 
-    @GetMapping("/friends")
-    public ApiResponse<Object> getFriends() {
-        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
-
-        List<Friend> friends = memberService.getFriends(member);
-
-        return ApiResponse.onSuccess(MemberConverter.toFriendListDto(friends));
-    }
-
     @GetMapping("/test")
     @Operation(summary = "테스트용 회원 정보 조회 API", description = "jwt 테스트용, 로그인한 회원 정보를 조회하는 API 입니다.")
     public ApiResponse<MemberResponse.myInfoDto> getMyInfo(Authentication authentication) {
@@ -70,5 +61,21 @@ public class MemberController {
                 .build();
 
         return ApiResponse.onSuccess(response);
+    }
+
+    @GetMapping("/friends")
+    public ApiResponse<MemberResponse.friendListDto> getFriends() {
+        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
+
+        List<Friend> friends = memberService.getFriends(member);
+
+        return ApiResponse.onSuccess(MemberConverter.toFriendListDto(friends));
+    }
+
+    @GetMapping("/chatroom")
+    public ApiResponse<Object> getChatroom() {
+        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
+
+        return null;
     }
 }
