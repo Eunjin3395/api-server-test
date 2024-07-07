@@ -72,10 +72,4 @@ public class MemberController {
         return ApiResponse.onSuccess(MemberConverter.toFriendListDto(friends));
     }
 
-    @GetMapping("/chatroom")
-    public ApiResponse<Object> getChatroom() {
-        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
-
-        return null;
-    }
 }

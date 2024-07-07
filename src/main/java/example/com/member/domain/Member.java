@@ -1,8 +1,9 @@
 package example.com.member.domain;
 
+import example.com.chat.domain.MemberChatroom;
+import example.com.common.domain.BaseDateTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import example.com.common.domain.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -47,4 +48,7 @@ public class Member extends BaseDateTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(20)")
     private RoleType roleType;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<MemberChatroom> memberChatroomList = new ArrayList<>();
 }
