@@ -5,27 +5,30 @@ import example.com.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Chatroom extends BaseDateTimeEntity {
+public class MemberChatroom extends BaseDateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chatroom_id")
+    @Column(name = "member_chatroom_id")
     private Long id;
-
-    private String uuid;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(30)", nullable = false)
-    private ChatroomType chatroomType;
+    private ChatroomStatus chatroomStatus;
 
-    @Column(columnDefinition = "TEXT")
-    private String postUrl;
+    private LocalDateTime lastViewDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "start_member_id")
-    private Member startMember;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member Member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chatroom_id", nullable = false)
+    private Chatroom chatroom;
 }
