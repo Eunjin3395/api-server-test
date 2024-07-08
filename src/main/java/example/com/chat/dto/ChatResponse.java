@@ -14,7 +14,7 @@ public class ChatResponse {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ChatCreateResultDto {
+    public static class ChatroomCreateResultDto {
         Long chatroomId;
         String uuid;
         ChatroomType chatroomType;
@@ -34,5 +34,16 @@ public class ChatResponse {
         String lastMsg;
         LocalDateTime lastMsgTime;
         Integer notReadMsgCnt;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChatCreateResultDto {
+        Long chatId;
+        String senderName;
+        String message;
+        LocalDateTime createdAt;
     }
 }

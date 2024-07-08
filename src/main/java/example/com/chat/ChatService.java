@@ -35,7 +35,6 @@ public class ChatService {
      */
     public List<String> getChatroomUuids(Member member) {
         return chatroomRepository.findActiveChatroomUuidsByMemberId(member.getId());
-
     }
 
     /**
@@ -45,7 +44,7 @@ public class ChatService {
      * @param member
      * @return
      */
-    public Chatroom createChatroom(ChatRequest.ChatCreateRequest request, Member member) {
+    public Chatroom createChatroom(ChatRequest.ChatroomCreateRequest request, Member member) {
         // 채팅 대상 회원의 존재 여부 검증
         Member targetMember = memberRepository.findById(request.getTargetMemberId())
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_TARGET_NOT_FOUND));
@@ -92,6 +91,12 @@ public class ChatService {
         return savedChatroom;
     }
 
+    /**
+     * 채팅방 목록 조회
+     *
+     * @param member
+     * @return
+     */
     public List<ChatResponse.ChatroomViewDto> getChatroomList(Member member) {
         // 현재 ACTIVE한 memberChatroom만 필터링
         List<MemberChatroom> activeMemberChatroom = member.getMemberChatroomList().stream()
@@ -122,7 +127,38 @@ public class ChatService {
                 })
                 .collect(Collectors.toList());
 
-
         return chatroomViewDtoList;
+    }
+
+    /**
+     * 채팅 등록 메소드
+     *
+     * @param request
+     * @param member
+     * @return
+     */
+    public Chat addChat(ChatRequest.ChatCreateRequest request, String chatroomUuid, Member member) {
+        // 채팅방 조회 및 존재 여부 검증
+        Chatroom chatroom = chatroomRepository.findByUuid(chatroomUuid)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_NOT_EXIST));
+
+        // 해당 채팅방이 회원의 것이 맞는지 검증
+        MemberChatroom memberChatroom = memberChatroomRepository.findByMemberIdAndChatroomId(member.getId(), chatroom.getId())
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_ACCESS_DENIED));
+
+        // 해당 회원이 이미 나간 채팅방인지 검증
+        if (memberChatroom.getChatroomStatus().equals(ChatroomStatus.INACTIVE)) {
+            throw new ChatHandler(ErrorStatus.CHATROOM_ACCESS_DENIED);
+        }
+
+        // chat 엔티티 생성
+        Chat chat = Chat.builder()
+                .contents(request.getMessage())
+                .isRead(false)
+                .chatroom(chatroom)
+                .fromMember(member)
+                .build();
+
+        return chatRepository.save(chat);
     }
 }
