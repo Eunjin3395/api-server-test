@@ -19,6 +19,9 @@ public class Chat extends BaseDateTimeEntity {
     @Column(nullable = false, length = 1000)
     private String contents;
 
+    @Column(nullable = false)
+    private boolean isRead;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatroom_id", nullable = false)
     private Chatroom chatroom;
@@ -27,7 +30,7 @@ public class Chat extends BaseDateTimeEntity {
     @JoinColumn(name = "from_member_id", nullable = false)
     private Member fromMember;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "to_member_id", nullable = false)
-    private Member toMember;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "to_member_id", nullable = false)
+//    private Member toMember;
 }
