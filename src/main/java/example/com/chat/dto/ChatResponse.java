@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 public class ChatResponse {
 
     @Builder
@@ -18,5 +20,19 @@ public class ChatResponse {
         ChatroomType chatroomType;
         String postUrl;
         Long targetMemberId;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChatroomViewDto {
+        Long chatroomId;
+        String uuid;
+        String targetMemberImg;
+        String targetMemberName;
+        String lastMsg;
+        LocalDateTime lastMsgTime;
+        Integer notReadMsgCnt;
     }
 }

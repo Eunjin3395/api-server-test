@@ -27,7 +27,7 @@ public class ChatController {
 
     @Operation(summary = "채팅방 uuid 조회 API", description = "회원이 속한 채팅방의 uuid를 조회하는 API 입니다.")
     @GetMapping("/member/chatroom/uuid")
-    public ApiResponse<List<String>> getChatroom() {
+    public ApiResponse<List<String>> getChatroomUuid() {
         Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
         List<String> chatroomUuids = chatService.getChatroomUuids(member);
         return ApiResponse.onSuccess(chatroomUuids);
@@ -41,6 +41,14 @@ public class ChatController {
         Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
         Chatroom chatroom = chatService.createChatroom(request, member);
         return ApiResponse.onSuccess(ChatConverter.toChatCreateResultDto(chatroom, request.getTargetMemberId()));
+    }
+
+    @Operation(summary = "채팅방 목록 조회 API", description = "회원이 속한 채팅방 목록을 조회하는 API 입니다.")
+    @GetMapping("/member/chatroom")
+    public ApiResponse<List<ChatResponse.ChatroomViewDto>> getChatroom() {
+        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
+
+        return ApiResponse.onSuccess(chatService.getChatroomList(member));
     }
 
 
