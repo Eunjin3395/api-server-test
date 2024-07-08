@@ -37,6 +37,8 @@ public class Member extends BaseDateTimeEntity {
 
     private LocalDate birth;
 
+    private String profileImg;
+
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(20)", nullable = false)
     private LoginType loginType;

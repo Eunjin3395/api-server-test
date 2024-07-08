@@ -27,6 +27,7 @@ public class MemberConverter {
                 .socialId(request.getSocialId())
                 .loginType(loginType)
                 .status(MemberStatus.ACTIVE)
+                .profileImg("/Users/jennyeunjin/gamegoo_img/profile_1.png")
                 .build();
     }
 
