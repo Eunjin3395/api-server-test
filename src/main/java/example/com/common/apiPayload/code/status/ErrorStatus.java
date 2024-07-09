@@ -35,6 +35,10 @@ public enum ErrorStatus implements BaseErrorCode {
     CHAT_TARGET_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4001", "채팅 대상 회원을 찾을 수 없습니다."),
     CHATROOM_NOT_EXIST(HttpStatus.NOT_FOUND, "CHAT4002", "채팅방을 찾을 수 없습니다."),
     CHATROOM_ACCESS_DENIED(HttpStatus.BAD_REQUEST, "CHAT4003", "접근할 수 없는 채팅방 입니다."),
+
+
+    // 소켓 api 관련 에러
+    SOCKET_API_RESPONSE_ERR(HttpStatus.INTERNAL_SERVER_ERROR, "SOCKET4001", "socket서버 api 요청에 실패했습니다."),
     ;
 
     private final HttpStatus httpStatus;

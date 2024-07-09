@@ -8,6 +8,7 @@ import example.com.chat.dto.ChatResponse;
 import example.com.common.apiPayload.ApiResponse;
 import example.com.member.MemberService;
 import example.com.member.domain.Member;
+import example.com.socket.SocketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,6 +28,7 @@ import java.util.List;
 public class ChatController {
     private final MemberService memberService;
     private final ChatService chatService;
+    private final SocketService socketService;
 
     @Operation(summary = "채팅방 uuid 조회 API", description = "회원이 속한 채팅방의 uuid를 조회하는 API 입니다.")
     @GetMapping("/member/chatroom/uuid")
@@ -86,6 +88,7 @@ public class ChatController {
     ) {
         Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
         Member targetMember = chatService.enterChatroom(chatroomUuid, member);
+        socketService.notifyChatroomEntered(member.getId(), chatroomUuid);
 
         return ApiResponse.onSuccess(ChatConverter.toChatroomEnterResultDto(targetMember));
     }
