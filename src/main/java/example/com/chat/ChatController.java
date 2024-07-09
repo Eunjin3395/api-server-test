@@ -9,10 +9,12 @@ import example.com.common.apiPayload.ApiResponse;
 import example.com.member.MemberService;
 import example.com.member.domain.Member;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,7 +56,7 @@ public class ChatController {
 
     @Operation(summary = "채팅 메시지 등록 API", description = "새로운 채팅 메시지를 등록하는 API 입니다.")
     @PostMapping("/chat/{chatroomUuid}")
-    public ApiResponse<Object> addChat(
+    public ApiResponse<ChatResponse.ChatCreateResultDto> addChat(
             @PathVariable(name = "chatroomUuid") String chatroomUuid,
             @RequestBody ChatRequest.ChatCreateRequest request
     ) {
@@ -62,6 +64,19 @@ public class ChatController {
         Chat chat = chatService.addChat(request, chatroomUuid, member);
 
         return ApiResponse.onSuccess(ChatConverter.toChatCreateResultDto(chat));
+    }
+
+    @Operation(summary = "채팅 내역 조회 API", description = "특정 채팅방의 메시지 내역을 조회하는 API 입니다.")
+    @GetMapping("/chat/{chatroomUuid}/messages")
+    @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해 주세요.")
+    public ApiResponse<Object> getChatMessages(
+            @PathVariable(name = "chatroomUuid") String chatroomUuid,
+            @RequestParam(name = "page") Integer page
+    ) {
+        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
+        Page<Chat> chatMessages = chatService.getChatMessages(chatroomUuid, member, page - 1);
+
+        return ApiResponse.onSuccess(ChatConverter.toChatMessageListDto(chatMessages, member));
     }
 
 }

@@ -11,6 +11,9 @@ import example.com.common.apiPayload.exception.handler.ChatHandler;
 import example.com.member.domain.Member;
 import example.com.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,6 +29,9 @@ public class ChatService {
     private final ChatroomRepository chatroomRepository;
     private final MemberChatroomRepository memberChatroomRepository;
     private final ChatRepository chatRepository;
+
+    private final static int PAGE_SIZE = 20;
+
 
     /**
      * 해당 회원의 ACTIVE한 채팅방의 uuid list를 리턴
@@ -160,5 +166,18 @@ public class ChatService {
                 .build();
 
         return chatRepository.save(chat);
+    }
+
+    public Page<Chat> getChatMessages(String chatroomUuid, Member member, Integer pageIdx) {
+        // chatroom 엔티티 조회 및 해당 회원의 채팅방이 맞는지 검증
+        Chatroom chatroom = chatroomRepository.findByUuid(chatroomUuid)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_NOT_EXIST));
+
+        MemberChatroom memberChatroom = memberChatroomRepository.findByMemberIdAndChatroomId(member.getId(), chatroom.getId())
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_ACCESS_DENIED));
+
+        PageRequest pageRequest = PageRequest.of(pageIdx, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        return chatRepository.findAllByChatroom(chatroom, pageRequest);
     }
 }

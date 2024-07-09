@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class ChatResponse {
 
@@ -46,4 +47,31 @@ public class ChatResponse {
         String message;
         LocalDateTime createdAt;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChatMessageListDto {
+        List<ChatMessageDto> chatMessageDtoList;
+        Integer list_size;
+        Integer total_page;
+        Long total_elements;
+        Boolean is_first;
+        Boolean is_last;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChatMessageDto {
+        Long chatId;
+        String senderName;
+        String senderProfileImg;
+        String message;
+        boolean isMine;
+        LocalDateTime createdAt;
+    }
+
 }
