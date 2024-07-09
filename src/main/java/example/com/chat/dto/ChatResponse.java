@@ -74,4 +74,14 @@ public class ChatResponse {
         LocalDateTime createdAt;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChatroomEnterResultDto {
+        Long memberId;
+        String name;
+        String memberProfileImg;
+    }
+
 }

@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface MemberChatroomRepository extends JpaRepository<MemberChatroom, Long> {
 
     @Query("SELECT mc.member FROM MemberChatroom mc WHERE mc.chatroom.id = :chatroomId AND mc.member.id != :memberId")
-    Member findMemberByChatroomIdAndMemberIdNot(@Param("chatroomId") Long chatroomId, @Param("memberId") Long memberId);
+    Member findTargetMemberByChatroomIdAndMemberId(@Param("chatroomId") Long chatroomId, @Param("memberId") Long memberId);
 
     Optional<MemberChatroom> findByMemberIdAndChatroomId(Long memberId, Long chatroomId);
 }

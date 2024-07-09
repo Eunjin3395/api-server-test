@@ -79,4 +79,15 @@ public class ChatController {
         return ApiResponse.onSuccess(ChatConverter.toChatMessageListDto(chatMessages, member));
     }
 
+    @Operation(summary = "채팅방 입장 API", description = "특정 채팅방에 입장하는 API 입니다. 채팅 상대의 id, 프로필 이미지, 닉네임을 리턴합니다.")
+    @GetMapping("/chat/{chatroomUuid}")
+    public ApiResponse<Object> enterChatroom(
+            @PathVariable(name = "chatroomUuid") String chatroomUuid
+    ) {
+        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
+        Member targetMember = chatService.enterChatroom(chatroomUuid, member);
+
+        return ApiResponse.onSuccess(ChatConverter.toChatroomEnterResultDto(targetMember));
+    }
+
 }

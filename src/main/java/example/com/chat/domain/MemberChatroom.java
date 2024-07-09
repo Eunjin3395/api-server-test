@@ -22,6 +22,7 @@ public class MemberChatroom extends BaseDateTimeEntity {
     @Column(columnDefinition = "VARCHAR(30)", nullable = false)
     private ChatroomStatus chatroomStatus;
 
+    @Setter
     private LocalDateTime lastViewDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)

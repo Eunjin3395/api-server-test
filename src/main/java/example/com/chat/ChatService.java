@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,6 +40,7 @@ public class ChatService {
      * @param member
      * @return
      */
+    @Transactional(readOnly = true)
     public List<String> getChatroomUuids(Member member) {
         return chatroomRepository.findActiveChatroomUuidsByMemberId(member.getId());
     }
@@ -50,6 +52,7 @@ public class ChatService {
      * @param member
      * @return
      */
+    @Transactional
     public Chatroom createChatroom(ChatRequest.ChatroomCreateRequest request, Member member) {
         // 채팅 대상 회원의 존재 여부 검증
         Member targetMember = memberRepository.findById(request.getTargetMemberId())
@@ -103,6 +106,7 @@ public class ChatService {
      * @param member
      * @return
      */
+    @Transactional(readOnly = true)
     public List<ChatResponse.ChatroomViewDto> getChatroomList(Member member) {
         // 현재 ACTIVE한 memberChatroom만 필터링
         List<MemberChatroom> activeMemberChatroom = member.getMemberChatroomList().stream()
@@ -111,7 +115,7 @@ public class ChatService {
 
         List<ChatResponse.ChatroomViewDto> chatroomViewDtoList = activeMemberChatroom.stream().map(memberChatroom -> {
                     // 채팅 상대 회원 조회
-                    Member targetMember = memberChatroomRepository.findMemberByChatroomIdAndMemberIdNot(memberChatroom.getChatroom().getId(), member.getId());
+                    Member targetMember = memberChatroomRepository.findTargetMemberByChatroomIdAndMemberId(memberChatroom.getChatroom().getId(), member.getId());
                     Chatroom chatroom = memberChatroom.getChatroom();
 
                     // 가장 마지막 대화 조회
@@ -143,6 +147,7 @@ public class ChatService {
      * @param member
      * @return
      */
+    @Transactional
     public Chat addChat(ChatRequest.ChatCreateRequest request, String chatroomUuid, Member member) {
         // 채팅방 조회 및 존재 여부 검증
         Chatroom chatroom = chatroomRepository.findByUuid(chatroomUuid)
@@ -168,6 +173,15 @@ public class ChatService {
         return chatRepository.save(chat);
     }
 
+    /**
+     * chatroomUuid에 해당하는 채팅방의 메시지 내역 조회, 페이징 포함
+     *
+     * @param chatroomUuid
+     * @param member
+     * @param pageIdx
+     * @return
+     */
+    @Transactional(readOnly = true)
     public Page<Chat> getChatMessages(String chatroomUuid, Member member, Integer pageIdx) {
         // chatroom 엔티티 조회 및 해당 회원의 채팅방이 맞는지 검증
         Chatroom chatroom = chatroomRepository.findByUuid(chatroomUuid)
@@ -176,8 +190,39 @@ public class ChatService {
         MemberChatroom memberChatroom = memberChatroomRepository.findByMemberIdAndChatroomId(member.getId(), chatroom.getId())
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_ACCESS_DENIED));
 
+        // 해당 회원이 퇴장한 채팅방은 아닌지도 나중에 검증 추가하기
+
+
         PageRequest pageRequest = PageRequest.of(pageIdx, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         return chatRepository.findAllByChatroom(chatroom, pageRequest);
+    }
+
+    /**
+     * chatroomUuid에 해당하는 채팅방에 입장 처리: lastViewDate 업데이트 및 메시지 읽음 처리 후 상대 회원 엔티티를 리턴
+     *
+     * @param chatroomUuid
+     * @param member
+     * @return
+     */
+    @Transactional
+    public Member enterChatroom(String chatroomUuid, Member member) {
+        // chatroom 엔티티 조회 및 해당 회원의 채팅방이 맞는지 검증
+        Chatroom chatroom = chatroomRepository.findByUuid(chatroomUuid)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_NOT_EXIST));
+
+        MemberChatroom memberChatroom = memberChatroomRepository.findByMemberIdAndChatroomId(member.getId(), chatroom.getId())
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_ACCESS_DENIED));
+
+        // 해당 회원이 퇴장한 채팅방은 아닌지도 나중에 검증 추가하기
+
+        // 해당 채팅방의 lastViewDateTime 업데이트
+        memberChatroom.setLastViewDateTime(LocalDateTime.now());
+
+        // 읽지 않은 Chat들을 모두 읽음 상태로 변경
+        List<Chat> unreadChatList = chatRepository.findUnreadChatsByChatroomIdAndFromMemberId(chatroom.getId(), member.getId());
+        unreadChatList.forEach(chat -> chat.setRead(true));
+
+        return memberChatroomRepository.findTargetMemberByChatroomIdAndMemberId(chatroom.getId(), member.getId());
     }
 }

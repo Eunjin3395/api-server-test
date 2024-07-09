@@ -57,6 +57,14 @@ public class ChatConverter {
                 .isMine(chat.getFromMember().equals(member))
                 .createdAt(chat.getCreatedAt())
                 .build();
-        
+
+    }
+
+    public static ChatResponse.ChatroomEnterResultDto toChatroomEnterResultDto(Member targetMember) {
+        return ChatResponse.ChatroomEnterResultDto.builder()
+                .memberId(targetMember.getId())
+                .memberProfileImg(targetMember.getProfileImg())
+                .name(targetMember.getName())
+                .build();
     }
 }

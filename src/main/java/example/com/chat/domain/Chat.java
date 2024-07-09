@@ -20,6 +20,7 @@ public class Chat extends BaseDateTimeEntity {
     private String contents;
 
     @Column(nullable = false)
+    @Setter
     private boolean isRead;
 
     @ManyToOne(fetch = FetchType.LAZY)
