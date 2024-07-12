@@ -25,6 +25,7 @@ public class ChatConverter {
 
         return ChatResponse.ChatCreateResultDto.builder()
                 .chatId(chat.getId())
+                .senderProfileImg(chat.getFromMember().getProfileImg())
                 .senderName(chat.getFromMember().getName())
                 .message(chat.getContents())
                 .createdAt(chat.getCreatedAt())

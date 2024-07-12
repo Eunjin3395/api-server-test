@@ -44,6 +44,7 @@ public class ChatResponse {
     public static class ChatCreateResultDto {
         Long chatId;
         String senderName;
+        String senderProfileImg;
         String message;
         LocalDateTime createdAt;
     }
