@@ -54,5 +54,15 @@ public class MemberResponse {
         String name;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class memberInfoDto {
+        Long memberId;
+        String name;
+        String profileImg;
+    }
+
 
 }

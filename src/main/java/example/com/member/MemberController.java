@@ -72,4 +72,17 @@ public class MemberController {
         return ApiResponse.onSuccess(MemberConverter.toFriendListDto(friends));
     }
 
+    @GetMapping
+    public ApiResponse<MemberResponse.memberInfoDto> getMemberInfo() {
+        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
+
+        MemberResponse.memberInfoDto response = MemberResponse.memberInfoDto.builder()
+                .memberId(member.getId())
+                .profileImg(member.getProfileImg())
+                .name(member.getName())
+                .build();
+
+        return ApiResponse.onSuccess(response);
+    }
+
 }
