@@ -88,7 +88,7 @@ public class ChatController {
     ) {
         Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
         Member targetMember = chatService.enterChatroom(chatroomUuid, member);
-        socketService.notifyChatroomEntered(member.getId(), chatroomUuid);
+        // socketService.notifyChatroomEntered(member.getId(), chatroomUuid);
 
         return ApiResponse.onSuccess(ChatConverter.toChatroomEnterResultDto(targetMember));
     }
