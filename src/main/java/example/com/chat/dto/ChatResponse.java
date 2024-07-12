@@ -43,6 +43,7 @@ public class ChatResponse {
     @AllArgsConstructor
     public static class ChatCreateResultDto {
         Long chatId;
+        Long senderId;
         String senderName;
         String senderProfileImg;
         String message;
