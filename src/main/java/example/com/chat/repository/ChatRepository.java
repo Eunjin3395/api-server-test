@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
@@ -22,4 +23,9 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     Page<Chat> findAllByChatroom(Chatroom chatroom, Pageable pageable);
 
+
+    @Query("SELECT c FROM Chat c WHERE c.chatroom.id = :chatroomId ORDER BY c.createdAt DESC")
+    List<Chat> findTop20ByChatroomIdOrderByCreatedAtDesc(
+            @Param("chatroomId") Long chatroomId,
+            Pageable pageable);
 }

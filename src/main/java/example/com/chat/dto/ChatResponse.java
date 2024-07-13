@@ -86,4 +86,13 @@ public class ChatResponse {
         String memberProfileImg;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChatroomMessageDto {
+        String chatroomUuid;
+        List<ChatMessageDto> chatMessageDtoList;
+    }
+
 }
