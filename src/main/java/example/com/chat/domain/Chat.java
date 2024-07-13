@@ -19,10 +19,6 @@ public class Chat extends BaseDateTimeEntity {
     @Column(nullable = false, length = 1000)
     private String contents;
 
-    @Column(nullable = false)
-    @Setter
-    private boolean isRead;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatroom_id", nullable = false)
     private Chatroom chatroom;

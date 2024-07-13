@@ -122,7 +122,8 @@ public class ChatService {
                     Chat lastChat = chatRepository.findFirstByChatroomIdOrderByCreatedAtDesc(chatroom.getId());
 
                     // 내가 읽지 않은 메시지 개수 조회
-                    Integer unReadCnt = chatRepository.countUnreadChatsByChatroomIdAndFromMemberId(chatroom.getId(), member.getId());
+                    LocalDateTime lastViewDateTime = memberChatroom.getLastViewDateTime();
+                    Integer unReadCnt = chatRepository.countChatsByChatroomIdAndFromMemberIdAfterLastViewDateTime(chatroom.getId(), member.getId(), lastViewDateTime);
 
                     return ChatResponse.ChatroomViewDto.builder()
                             .chatroomId(chatroom.getId())
@@ -165,7 +166,6 @@ public class ChatService {
         // chat 엔티티 생성
         Chat chat = Chat.builder()
                 .contents(request.getMessage())
-                .isRead(false)
                 .chatroom(chatroom)
                 .fromMember(member)
                 .build();
@@ -192,7 +192,6 @@ public class ChatService {
 
         // 해당 회원이 퇴장한 채팅방은 아닌지도 나중에 검증 추가하기
 
-
         PageRequest pageRequest = PageRequest.of(pageIdx, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         return chatRepository.findAllByChatroom(chatroom, pageRequest);
@@ -218,10 +217,6 @@ public class ChatService {
 
         // 해당 채팅방의 lastViewDateTime 업데이트
         memberChatroom.setLastViewDateTime(LocalDateTime.now());
-
-        // 읽지 않은 Chat들을 모두 읽음 상태로 변경
-        List<Chat> unreadChatList = chatRepository.findUnreadChatsByChatroomIdAndFromMemberId(chatroom.getId(), member.getId());
-        unreadChatList.forEach(chat -> chat.setRead(true));
 
         return memberChatroomRepository.findTargetMemberByChatroomIdAndMemberId(chatroom.getId(), member.getId());
     }
