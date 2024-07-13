@@ -78,7 +78,7 @@ public class ChatController {
         Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
         Page<Chat> chatMessages = chatService.getChatMessages(chatroomUuid, member, page - 1);
 
-        return ApiResponse.onSuccess(ChatConverter.toChatMessageListDto(chatMessages, member));
+        return ApiResponse.onSuccess(ChatConverter.toChatMessageListDto(chatMessages));
     }
 
     @Operation(summary = "채팅방 입장 API", description = "특정 채팅방에 입장하는 API 입니다. 채팅 상대의 id, 프로필 이미지, 닉네임을 리턴합니다.")

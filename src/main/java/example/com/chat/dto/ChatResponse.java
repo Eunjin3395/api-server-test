@@ -69,10 +69,10 @@ public class ChatResponse {
     @AllArgsConstructor
     public static class ChatMessageDto {
         Long chatId;
+        Long senderId;
         String senderName;
         String senderProfileImg;
         String message;
-        boolean isMine;
         LocalDateTime createdAt;
     }
 

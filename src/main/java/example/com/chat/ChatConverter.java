@@ -33,10 +33,10 @@ public class ChatConverter {
                 .build();
     }
 
-    public static ChatResponse.ChatMessageListDto toChatMessageListDto(Page<Chat> chat, Member member) {
+    public static ChatResponse.ChatMessageListDto toChatMessageListDto(Page<Chat> chat) {
         List<ChatResponse.ChatMessageDto> chatMessageDtoList = chat.stream()
                 .map(chatElement -> {
-                    return toChatMessageDto(chatElement, member);
+                    return toChatMessageDto(chatElement);
                 }).collect(Collectors.toList());
 
         return ChatResponse.ChatMessageListDto.builder()
@@ -49,14 +49,14 @@ public class ChatConverter {
                 .build();
     }
 
-    public static ChatResponse.ChatMessageDto toChatMessageDto(Chat chat, Member member) {
+    public static ChatResponse.ChatMessageDto toChatMessageDto(Chat chat) {
 
         return ChatResponse.ChatMessageDto.builder()
                 .chatId(chat.getId())
+                .senderId(chat.getFromMember().getId())
                 .senderName(chat.getFromMember().getName())
                 .senderProfileImg(chat.getFromMember().getProfileImg())
                 .message(chat.getContents())
-                .isMine(chat.getFromMember().equals(member))
                 .createdAt(chat.getCreatedAt())
                 .build();
 
