@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,13 +73,16 @@ public class ChatQueryService {
                     LocalDateTime lastViewDateTime = memberChatroom.getLastViewDateTime();
                     Integer unReadCnt = chatRepository.countChatsByChatroomIdAndFromMemberIdAfterLastViewDateTime(chatroom.getId(), member.getId(), lastViewDateTime);
 
+                    // ISO 8601 형식의 문자열로 변환
+                    String lastAtIoString = lastChat.getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME);
+                    
                     return ChatResponse.ChatroomViewDto.builder()
                             .chatroomId(chatroom.getId())
                             .uuid(chatroom.getUuid())
                             .targetMemberImg(targetMember.getProfileImg())
                             .targetMemberName(targetMember.getName())
                             .lastMsg(lastChat.getContents())
-                            .lastMsgTime(lastChat.getCreatedAt())
+                            .lastMsgAt(lastAtIoString)
                             .notReadMsgCnt(unReadCnt)
                             .build();
 
@@ -134,13 +138,15 @@ public class ChatQueryService {
 
                     // chat -> dto 변환
                     List<ChatResponse.ChatMessageDto> chatMessageDtoList = top20ChatList.stream().map(chat -> {
+                        // ISO 8601 형식의 문자열로 변환
+                        String createdAtIoString = chat.getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME);
+
                         return ChatResponse.ChatMessageDto.builder()
-                                .chatId(chat.getId())
                                 .senderId(chat.getFromMember().getId())
                                 .senderName(chat.getFromMember().getName())
                                 .senderProfileImg(chat.getFromMember().getProfileImg())
                                 .message(chat.getContents())
-                                .createdAt(chat.getCreatedAt())
+                                .createdAt(createdAtIoString)
                                 .build();
                     }).collect(Collectors.toList());
 

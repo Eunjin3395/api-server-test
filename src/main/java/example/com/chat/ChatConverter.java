@@ -6,6 +6,7 @@ import example.com.chat.dto.ChatResponse;
 import example.com.member.domain.Member;
 import org.springframework.data.domain.Page;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,22 +24,21 @@ public class ChatConverter {
     }
 
     public static ChatResponse.ChatCreateResultDto toChatCreateResultDto(Chat chat) {
+        // ISO 8601 형식의 문자열로 변환
+        String createdAtIoString = chat.getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME);
 
         return ChatResponse.ChatCreateResultDto.builder()
-                .chatId(chat.getId())
                 .senderId(chat.getFromMember().getId())
                 .senderProfileImg(chat.getFromMember().getProfileImg())
                 .senderName(chat.getFromMember().getName())
                 .message(chat.getContents())
-                .createdAt(chat.getCreatedAt())
+                .createdAt(createdAtIoString)
                 .build();
     }
 
     public static ChatResponse.ChatMessageListDto toChatMessageListDto(Page<Chat> chat) {
         List<ChatResponse.ChatMessageDto> chatMessageDtoList = chat.stream()
-                .map(chatElement -> {
-                    return toChatMessageDto(chatElement);
-                }).collect(Collectors.toList());
+                .map(ChatConverter::toChatMessageDto).collect(Collectors.toList());
 
         Collections.reverse(chatMessageDtoList);
 
@@ -53,14 +53,15 @@ public class ChatConverter {
     }
 
     public static ChatResponse.ChatMessageDto toChatMessageDto(Chat chat) {
+        // ISO 8601 형식의 문자열로 변환
+        String createdAtIoString = chat.getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME);
 
         return ChatResponse.ChatMessageDto.builder()
-                .chatId(chat.getId())
                 .senderId(chat.getFromMember().getId())
                 .senderName(chat.getFromMember().getName())
                 .senderProfileImg(chat.getFromMember().getProfileImg())
                 .message(chat.getContents())
-                .createdAt(chat.getCreatedAt())
+                .createdAt(createdAtIoString)
                 .build();
 
     }
