@@ -6,6 +6,7 @@ import example.com.chat.dto.ChatResponse;
 import example.com.member.domain.Member;
 import org.springframework.data.domain.Page;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,8 @@ public class ChatConverter {
                 .map(chatElement -> {
                     return toChatMessageDto(chatElement);
                 }).collect(Collectors.toList());
+
+        Collections.reverse(chatMessageDtoList);
 
         return ChatResponse.ChatMessageListDto.builder()
                 .chatMessageDtoList(chatMessageDtoList)

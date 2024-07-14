@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -127,6 +128,9 @@ public class ChatQueryService {
                     // 해당 chatroom의 최근 20개 채팅 내역 조회
                     Pageable pageable = PageRequest.of(0, 20);
                     List<Chat> top20ChatList = chatRepository.findTop20ByChatroomIdOrderByCreatedAtDesc(memberChatroom.getChatroom().getId(), pageable);
+
+                    // 날짜 오름차순으로 변경
+                    Collections.reverse(top20ChatList);
 
                     // chat -> dto 변환
                     List<ChatResponse.ChatMessageDto> chatMessageDtoList = top20ChatList.stream().map(chat -> {
