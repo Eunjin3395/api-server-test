@@ -11,7 +11,6 @@ import example.com.chat.repository.MemberChatroomRepository;
 import example.com.common.apiPayload.code.status.ErrorStatus;
 import example.com.common.apiPayload.exception.handler.ChatHandler;
 import example.com.member.domain.Member;
-import example.com.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,7 +29,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ChatQueryService {
-    private final MemberRepository memberRepository;
     private final ChatroomRepository chatroomRepository;
     private final MemberChatroomRepository memberChatroomRepository;
     private final ChatRepository chatRepository;
@@ -56,10 +54,8 @@ public class ChatQueryService {
      */
     @Transactional(readOnly = true)
     public List<ChatResponse.ChatroomViewDto> getChatroomList(Member member) {
-        // 현재 ACTIVE한 memberChatroom만 필터링
-        List<MemberChatroom> activeMemberChatroom = member.getMemberChatroomList().stream()
-                .filter(memberChatroom -> memberChatroom.getChatroomStatus().equals(ChatroomStatus.ACTIVE))
-                .toList();
+        // 현재 ACTIVE한 memberChatroom을 각 memberChatroom에 속한 chat의 마지막 createdAt 기준 최신순으로 정렬해 조회
+        List<MemberChatroom> activeMemberChatroom = memberChatroomRepository.findByMemberIdAndChatroomStatusOrderByLastChatCreatedAtDesc(member.getId(), ChatroomStatus.ACTIVE);
 
         List<ChatResponse.ChatroomViewDto> chatroomViewDtoList = activeMemberChatroom.stream().map(memberChatroom -> {
                     // 채팅 상대 회원 조회
@@ -75,7 +71,7 @@ public class ChatQueryService {
 
                     // ISO 8601 형식의 문자열로 변환
                     String lastAtIoString = lastChat.getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME);
-                    
+
                     return ChatResponse.ChatroomViewDto.builder()
                             .chatroomId(chatroom.getId())
                             .uuid(chatroom.getUuid())
