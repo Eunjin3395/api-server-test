@@ -45,6 +45,7 @@ public class MemberConverter {
         return MemberResponse.friendInfoDto.builder()
                 .memberId(friend.getToMember().getId())
                 .name(friend.getToMember().getName())
+                .memberProfileImg(friend.getToMember().getProfileImg())
                 .build();
     }
 }

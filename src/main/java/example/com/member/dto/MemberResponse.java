@@ -52,6 +52,7 @@ public class MemberResponse {
     public static class friendInfoDto {
         Long memberId;
         String name;
+        String memberProfileImg;
     }
 
     @Builder
