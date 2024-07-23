@@ -7,11 +7,14 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+
     properties:
       hibernate:
       # show_sql: true
       format_sql: true
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
+      use_sql_comments: true
+
   data:
     redis:
       host: localhost
