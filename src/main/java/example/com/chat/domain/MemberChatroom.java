@@ -2,10 +2,23 @@ package example.com.chat.domain;
 
 import example.com.common.domain.BaseDateTimeEntity;
 import example.com.member.domain.Member;
-import jakarta.persistence.*;
-import lombok.*;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -13,6 +26,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class MemberChatroom extends BaseDateTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_chatroom_id")
@@ -39,5 +53,9 @@ public class MemberChatroom extends BaseDateTimeEntity {
         }
         this.member = member;
         this.member.getMemberChatroomList().add(this);
+    }
+
+    public void updateLastViewDateTime(LocalDateTime lastViewDateTime) {
+        this.lastViewDateTime = lastViewDateTime;
     }
 }
