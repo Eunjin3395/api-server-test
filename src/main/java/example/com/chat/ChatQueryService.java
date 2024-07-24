@@ -91,100 +91,6 @@ public class ChatQueryService {
         return chatroomViewDtoList;
     }
 
-//    /**
-//     * 회원이 속한 모든 chatroom의 최근 메시지 20개 조회
-//     *
-//     * @param member
-//     * @return
-//     */
-//    @Transactional(readOnly = true)
-//    public List<ChatResponse.ChatroomMessageDto> getAllChatroomMessage(Member member) {
-//        // 현재 ACTIVE한 memberChatroom만 필터링
-//        List<MemberChatroom> activeMemberChatroom = member.getMemberChatroomList().stream()
-//            .filter(
-//                memberChatroom -> memberChatroom.getChatroomStatus().equals(ChatroomStatus.ACTIVE))
-//            .toList();
-//
-//        return activeMemberChatroom.stream()
-//            .map(memberChatroom -> {
-//                // 해당 chatroom의 최근 20개 채팅 내역 조회
-//                Pageable pageable = PageRequest.of(0, 20);
-//                List<Chat> top20ChatList = chatRepository.findTop20ByChatroomIdOrderByCreatedAtDesc(
-//                    memberChatroom.getChatroom().getId(), pageable);
-//
-//                // 날짜 오름차순으로 변경
-//                Collections.reverse(top20ChatList);
-//
-//                // chat -> dto 변환
-//                List<ChatResponse.ChatMessageDto> chatMessageDtoList = top20ChatList.stream()
-//                    .map(chat -> {
-//                        // ISO 8601 형식의 문자열로 변환
-//                        String createdAtIoString = chat.getCreatedAt()
-//                            .format(DateTimeFormatter.ISO_DATE_TIME);
-//
-//                        return ChatResponse.ChatMessageDto.builder()
-//                            .senderId(chat.getFromMember().getId())
-//                            .senderName(chat.getFromMember().getName())
-//                            .senderProfileImg(chat.getFromMember().getProfileImg())
-//                            .message(chat.getContents())
-//                            .createdAt(createdAtIoString)
-//                            .build();
-//                    }).collect(Collectors.toList());
-//
-//                return ChatResponse.ChatroomMessageDto.builder()
-//                    .chatroomUuid(memberChatroom.getChatroom().getUuid())
-//                    .chatMessageDtoList(chatMessageDtoList)
-//                    .build();
-//
-//            })
-//            .collect(Collectors.toList());
-//    }
-
-//    /**
-//     * 해당 회원의 모든 Chatroom 중, 안읽은 메시지 모두 조회
-//     *
-//     * @param member
-//     * @return
-//     */
-//    @Transactional(readOnly = true)
-//    public List<ChatResponse.ChatroomMessageDto> getAllUnreadMessage(Member member) {
-//        // 현재 ACTIVE한 memberChatroom만 필터링
-//        List<MemberChatroom> activeMemberChatroom = member.getMemberChatroomList().stream()
-//            .filter(
-//                memberChatroom -> memberChatroom.getChatroomStatus().equals(ChatroomStatus.ACTIVE))
-//            .toList();
-//
-//        return activeMemberChatroom.stream()
-//            .map(memberChatroom -> {
-//                // 해당 chatroom의 안읽은 메시지 모두 조회
-//                List<Chat> unreadChatList = chatRepository.findUnreadChats(
-//                    memberChatroom.getId());
-//
-//                // chat -> dto 변환
-//                List<ChatResponse.ChatMessageDto> chatMessageDtoList = unreadChatList.stream()
-//                    .map(chat -> {
-//                        // ISO 8601 형식의 문자열로 변환
-//                        String createdAtIoString = chat.getCreatedAt()
-//                            .format(DateTimeFormatter.ISO_DATE_TIME);
-//
-//                        return ChatResponse.ChatMessageDto.builder()
-//                            .senderId(chat.getFromMember().getId())
-//                            .senderName(chat.getFromMember().getName())
-//                            .senderProfileImg(chat.getFromMember().getProfileImg())
-//                            .message(chat.getContents())
-//                            .createdAt(createdAtIoString)
-//                            .build();
-//                    }).collect(Collectors.toList());
-//
-//                return ChatResponse.ChatroomMessageDto.builder()
-//                    .chatroomUuid(memberChatroom.getChatroom().getUuid())
-//                    .chatMessageDtoList(chatMessageDtoList)
-//                    .build();
-//
-//            })
-//            .collect(Collectors.toList());
-//    }
-
     /**
      * chatroomUuid에 해당하는 채팅방의 메시지 내역 조회, 페이징 포함
      *
@@ -207,7 +113,12 @@ public class ChatQueryService {
 
         PageRequest pageRequest = PageRequest.of(0, PAGE_SIZE);
 
-        return chatRepository.findChatsByCursor(cursor, chatroom.getId(), pageRequest);
+        // requestParam으로 cursor가 넘어온 경우
+        if (cursor != null) {
+            return chatRepository.findChatsByCursor(cursor, chatroom.getId(), pageRequest);
+        } else { // cursor가 넘어오지 않은 경우 = 해당 chatroom의 가장 최근 chat을 조회하는 요청
+            return chatRepository.findRecentChats(chatroom.getId(), memberChatroom.getId());
+        }
     }
 
 }
