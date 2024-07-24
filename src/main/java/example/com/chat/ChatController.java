@@ -126,7 +126,7 @@ public class ChatController {
     @Parameter(name = "cursor", description = "페이징을 위한 커서, ISO-8601 형식의 문자열을 base64 인코딩 해 보내주세요.")
     public ApiResponse<Object> getChatMessages(
         @PathVariable(name = "chatroomUuid") String chatroomUuid,
-        @RequestParam(name = "cursor", required = false) String cursor
+        @RequestParam(name = "cursor", required = false) Long cursor
     ) {
         Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
         Slice<Chat> chatMessages = chatQueryService.getChatMessagesByCursor(chatroomUuid, member,

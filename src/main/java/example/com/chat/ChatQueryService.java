@@ -222,7 +222,7 @@ public class ChatQueryService {
      * @return
      */
     @Transactional(readOnly = true)
-    public Slice<Chat> getChatMessagesByCursor(String chatroomUuid, Member member, String cursor) {
+    public Slice<Chat> getChatMessagesByCursor(String chatroomUuid, Member member, Long cursor) {
         // chatroom 엔티티 조회 및 해당 회원의 채팅방이 맞는지 검증
         Chatroom chatroom = chatroomRepository.findByUuid(chatroomUuid)
             .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_NOT_EXIST));

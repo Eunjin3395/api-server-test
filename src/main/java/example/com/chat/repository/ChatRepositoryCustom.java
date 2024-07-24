@@ -6,5 +6,5 @@ import org.springframework.data.domain.Slice;
 
 public interface ChatRepositoryCustom {
 
-    Slice<Chat> findChatsByCursor(String cursor, Long chatroomId, Pageable pageable);
+    Slice<Chat> findChatsByCursor(Long cursor, Long chatroomId, Pageable pageable);
 }

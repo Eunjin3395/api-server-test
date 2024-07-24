@@ -5,7 +5,6 @@ import static example.com.chat.domain.QChat.chat;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import example.com.chat.domain.Chat;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +20,13 @@ public class ChatRepositoryCustomImpl implements ChatRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Slice<Chat> findChatsByCursor(String cursor, Long chatroomId, Pageable pageable) {
+    public Slice<Chat> findChatsByCursor(Long cursor, Long chatroomId, Pageable pageable) {
 
         // cursor string decode
-        LocalDateTime cursorDate = TimeCursorParser.decode(cursor);
+        //LocalDateTime cursorDate = TimeCursorParser.decode(cursor);
 
         List<Chat> result = queryFactory.selectFrom(chat)
-            .where(chat.chatroom.id.eq(chatroomId), createdBefore(cursorDate))
+            .where(chat.chatroom.id.eq(chatroomId), createdBefore(cursor))
             .orderBy(chat.createdAt.desc())
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize() + 1) // 다음 페이지가 있는지 확인하기 위해 +1
@@ -45,11 +44,8 @@ public class ChatRepositoryCustomImpl implements ChatRepositoryCustom {
         return new SliceImpl<>(result, pageable, hasNext);
     }
 
-    private BooleanExpression createdBefore(LocalDateTime cursorDate) {
-        if (cursorDate != null) {
-            return chat.createdAt.lt(cursorDate);
-        }
-
-        return null;
+    //--- BooleanExpression ---//
+    private BooleanExpression createdBefore(Long cursorTimestamp) {
+        return cursorTimestamp != null ? chat.timestamp.lt(cursorTimestamp) : null;
     }
 }

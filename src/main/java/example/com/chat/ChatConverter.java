@@ -3,7 +3,6 @@ package example.com.chat;
 import example.com.chat.domain.Chat;
 import example.com.chat.domain.Chatroom;
 import example.com.chat.dto.ChatResponse;
-import example.com.chat.repository.TimeCursorParser;
 import example.com.member.domain.Member;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -42,20 +41,12 @@ public class ChatConverter {
         List<ChatResponse.ChatMessageDto> chatMessageDtoList = chat.stream()
             .map(ChatConverter::toChatMessageDto).collect(Collectors.toList());
 
-        // Collections.reverse(chatMessageDtoList);
-
-        // next cursor를 현재 chat list의 가장 오래된 chat의 createdAt을 인코딩해 세팅
-        String nextCursor = null;
-        if (chat.hasNext()) {
-            nextCursor = TimeCursorParser.encodeLocalDateTime(
-                chat.getContent().get(0).getCreatedAt());
-        }
-
         return ChatResponse.ChatMessageListDto.builder()
             .chatMessageDtoList(chatMessageDtoList)
             .list_size(chatMessageDtoList.size())
             .has_next(chat.hasNext())
-            .next_cursor(nextCursor)
+            .next_cursor(chat.hasNext() ? chat.getContent().get(0).getTimestamp()
+                : null) // next cursor를 현재 chat list의 가장 오래된 chat의 timestamp로 주기
             .build();
     }
 
@@ -69,6 +60,7 @@ public class ChatConverter {
             .senderProfileImg(chat.getFromMember().getProfileImg())
             .message(chat.getContents())
             .createdAt(createdAtIoString)
+            .timestamp(chat.getTimestamp())
             .build();
 
     }

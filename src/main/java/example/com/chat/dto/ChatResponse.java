@@ -60,7 +60,7 @@ public class ChatResponse {
         List<ChatMessageDto> chatMessageDtoList;
         Integer list_size;
         Boolean has_next;
-        String next_cursor;
+        Long next_cursor;
     }
 
     @Builder
@@ -69,12 +69,12 @@ public class ChatResponse {
     @AllArgsConstructor
     public static class ChatMessageDto {
 
-        //Long chatId;
         Long senderId;
         String senderName;
         String senderProfileImg;
         String message;
         String createdAt;
+        Long timestamp;
     }
 
     @Builder
