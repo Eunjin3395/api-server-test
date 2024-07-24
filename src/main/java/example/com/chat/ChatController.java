@@ -75,19 +75,6 @@ public class ChatController {
         return ApiResponse.onSuccess(ChatConverter.toChatCreateResultDto(chat));
     }
 
-//    @Operation(summary = "채팅 내역 조회 API", description = "특정 채팅방의 메시지 내역을 조회하는 API 입니다.")
-//    @GetMapping("/chat/{chatroomUuid}/messages")
-//    @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해 주세요.")
-//    public ApiResponse<Object> getChatMessages(
-//        @PathVariable(name = "chatroomUuid") String chatroomUuid,
-//        @RequestParam(name = "page") Integer page
-//    ) {
-//        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
-//        Page<Chat> chatMessages = chatQueryService.getChatMessages(chatroomUuid, member, page - 1);
-//
-//        return ApiResponse.onSuccess(ChatConverter.toChatMessageListDto(chatMessages));
-//    }
-
     @Operation(summary = "채팅방 입장 API", description = "특정 채팅방에 입장하는 API 입니다. 채팅 상대의 id, 프로필 이미지, 닉네임을 리턴합니다.")
     @GetMapping("/chat/{chatroomUuid}")
     public ApiResponse<ChatResponse.ChatroomEnterResultDto> enterChatroom(
@@ -100,30 +87,32 @@ public class ChatController {
         return ApiResponse.onSuccess(ChatConverter.toChatroomEnterResultDto(targetMember));
     }
 
-    @Operation(summary = "모든 채팅방의 최근 20개 채팅 내역 조회 API", description = "해당 회원이 속한 모든 채팅방의 최근 20개 채팅 내역을 조회하는 API 입니다.")
-    @GetMapping("/member/chatroom/messages")
-    public ApiResponse<List<ChatResponse.ChatroomMessageDto>> getAllChatroomAndMsg() {
-        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
-        List<ChatResponse.ChatroomMessageDto> allChatroomMessage = chatQueryService.getAllChatroomMessage(
-            member);
+//    @Operation(summary = "모든 채팅방의 최근 20개 채팅 내역 조회 API", description = "해당 회원이 속한 모든 채팅방의 최근 20개 채팅 내역을 조회하는 API 입니다.")
+//    @GetMapping("/member/chatroom/messages")
+//    public ApiResponse<List<ChatResponse.ChatroomMessageDto>> getAllChatroomAndMsg() {
+//        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
+//        List<ChatResponse.ChatroomMessageDto> allChatroomMessage = chatQueryService.getAllChatroomMessage(
+//            member);
+//
+//        return ApiResponse.onSuccess(allChatroomMessage);
+//    }
 
-        return ApiResponse.onSuccess(allChatroomMessage);
-    }
-
-    @Operation(summary = "모든 채팅방의 읽지 않은 메시지 조회 API", description = "해당 회원이 속한 모든 채팅방의 읽지 않은 메시지 모두를 조회하는 API 입니다.")
-    @GetMapping("/member/chatroom/messages/unread")
-    public ApiResponse<List<ChatResponse.ChatroomMessageDto>> getAllUnreadChat() {
-        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
-        List<ChatResponse.ChatroomMessageDto> allChatroomMessage = chatQueryService.getAllUnreadMessage(
-            member);
-
-        return ApiResponse.onSuccess(allChatroomMessage);
-    }
+//    @Operation(summary = "모든 채팅방의 읽지 않은 메시지 조회 API", description = "해당 회원이 속한 모든 채팅방의 읽지 않은 메시지 모두를 조회하는 API 입니다.")
+//    @GetMapping("/member/chatroom/messages/unread")
+//    public ApiResponse<List<ChatResponse.ChatroomMessageDto>> getAllUnreadChat() {
+//        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
+//        List<ChatResponse.ChatroomMessageDto> allChatroomMessage = chatQueryService.getAllUnreadMessage(
+//            member);
+//
+//        return ApiResponse.onSuccess(allChatroomMessage);
+//    }
 
 
-    @Operation(summary = "채팅 내역 조회 API", description = "특정 채팅방의 메시지 내역을 조회하는 API 입니다.")
+    @Operation(summary = "채팅 내역 조회 API", description = "특정 채팅방의 메시지 내역을 조회하는 API 입니다.\n\n" +
+        "cursor 파라미터를 보내면, 해당 timestamp 이전에 전송된 메시지 최대 20개를 조회합니다.\n\n" +
+        "cursor 파라미터를 보내지 않으면, 해당 채팅방의 가장 최근 메시지 내역을 조회합니다.")
     @GetMapping("/chat/{chatroomUuid}/messages")
-    @Parameter(name = "cursor", description = "페이징을 위한 커서, ISO-8601 형식의 문자열을 base64 인코딩 해 보내주세요.")
+    @Parameter(name = "cursor", description = "페이징을 위한 커서, 13자리 timestamp integer를 보내주세요. (UTC 기준)")
     public ApiResponse<Object> getChatMessages(
         @PathVariable(name = "chatroomUuid") String chatroomUuid,
         @RequestParam(name = "cursor", required = false) Long cursor
