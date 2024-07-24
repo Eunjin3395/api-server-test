@@ -1,12 +1,11 @@
 package example.com.chat.dto;
 
 import example.com.chat.domain.ChatroomType;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 public class ChatResponse {
 
@@ -15,6 +14,7 @@ public class ChatResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChatroomCreateResultDto {
+
         Long chatroomId;
         String uuid;
         ChatroomType chatroomType;
@@ -27,6 +27,7 @@ public class ChatResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChatroomViewDto {
+
         Long chatroomId;
         String uuid;
         String targetMemberImg;
@@ -41,6 +42,7 @@ public class ChatResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChatCreateResultDto {
+
         //Long chatId;
         Long senderId;
         String senderName;
@@ -54,12 +56,11 @@ public class ChatResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChatMessageListDto {
+
         List<ChatMessageDto> chatMessageDtoList;
         Integer list_size;
-        Integer total_page;
-        Long total_elements;
-        Boolean is_first;
-        Boolean is_last;
+        Boolean has_next;
+        String next_cursor;
     }
 
     @Builder
@@ -67,6 +68,7 @@ public class ChatResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChatMessageDto {
+
         //Long chatId;
         Long senderId;
         String senderName;
@@ -80,6 +82,7 @@ public class ChatResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChatroomEnterResultDto {
+
         Long memberId;
         String name;
         String memberProfileImg;
@@ -90,6 +93,7 @@ public class ChatResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ChatroomMessageDto {
+
         String chatroomUuid;
         List<ChatMessageDto> chatMessageDtoList;
     }

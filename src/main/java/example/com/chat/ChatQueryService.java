@@ -17,10 +17,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,31 +93,31 @@ public class ChatQueryService {
         return chatroomViewDtoList;
     }
 
-    /**
-     * chatroomUuid에 해당하는 채팅방의 메시지 내역 조회, 페이징 포함
-     *
-     * @param chatroomUuid
-     * @param member
-     * @param pageIdx
-     * @return
-     */
-    @Transactional(readOnly = true)
-    public Page<Chat> getChatMessages(String chatroomUuid, Member member, Integer pageIdx) {
-        // chatroom 엔티티 조회 및 해당 회원의 채팅방이 맞는지 검증
-        Chatroom chatroom = chatroomRepository.findByUuid(chatroomUuid)
-            .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_NOT_EXIST));
-
-        MemberChatroom memberChatroom = memberChatroomRepository.findByMemberIdAndChatroomId(
-                member.getId(), chatroom.getId())
-            .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_ACCESS_DENIED));
-
-        // 해당 회원이 퇴장한 채팅방은 아닌지도 나중에 검증 추가하기
-
-        PageRequest pageRequest = PageRequest.of(pageIdx, PAGE_SIZE,
-            Sort.by(Sort.Direction.DESC, "createdAt"));
-
-        return chatRepository.findAllByChatroom(chatroom, pageRequest);
-    }
+//    /**
+//     * chatroomUuid에 해당하는 채팅방의 메시지 내역 조회, 페이징 포함
+//     *
+//     * @param chatroomUuid
+//     * @param member
+//     * @param pageIdx
+//     * @return
+//     */
+//    @Transactional(readOnly = true)
+//    public Page<Chat> getChatMessages(String chatroomUuid, Member member, Integer pageIdx) {
+//        // chatroom 엔티티 조회 및 해당 회원의 채팅방이 맞는지 검증
+//        Chatroom chatroom = chatroomRepository.findByUuid(chatroomUuid)
+//            .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_NOT_EXIST));
+//
+//        MemberChatroom memberChatroom = memberChatroomRepository.findByMemberIdAndChatroomId(
+//                member.getId(), chatroom.getId())
+//            .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_ACCESS_DENIED));
+//
+//        // 해당 회원이 퇴장한 채팅방은 아닌지도 나중에 검증 추가하기
+//
+//        PageRequest pageRequest = PageRequest.of(pageIdx, PAGE_SIZE,
+//            Sort.by(Sort.Direction.DESC, "createdAt"));
+//
+//        return chatRepository.findAllByChatroom(chatroom, pageRequest);
+//    }
 
     /**
      * 회원이 속한 모든 chatroom의 최근 메시지 20개 조회
@@ -212,6 +211,31 @@ public class ChatQueryService {
 
             })
             .collect(Collectors.toList());
+    }
+
+    /**
+     * chatroomUuid에 해당하는 채팅방의 메시지 내역 조회, 페이징 포함
+     *
+     * @param chatroomUuid
+     * @param member
+     * @param cursor
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public Slice<Chat> getChatMessagesByCursor(String chatroomUuid, Member member, String cursor) {
+        // chatroom 엔티티 조회 및 해당 회원의 채팅방이 맞는지 검증
+        Chatroom chatroom = chatroomRepository.findByUuid(chatroomUuid)
+            .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_NOT_EXIST));
+
+        MemberChatroom memberChatroom = memberChatroomRepository.findByMemberIdAndChatroomId(
+                member.getId(), chatroom.getId())
+            .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_ACCESS_DENIED));
+
+        // 해당 회원이 퇴장한 채팅방은 아닌지도 나중에 검증 추가하기
+
+        PageRequest pageRequest = PageRequest.of(0, PAGE_SIZE);
+
+        return chatRepository.findChatsByCursor(cursor, chatroom.getId(), pageRequest);
     }
 
 }

@@ -15,7 +15,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -75,18 +75,18 @@ public class ChatController {
         return ApiResponse.onSuccess(ChatConverter.toChatCreateResultDto(chat));
     }
 
-    @Operation(summary = "채팅 내역 조회 API", description = "특정 채팅방의 메시지 내역을 조회하는 API 입니다.")
-    @GetMapping("/chat/{chatroomUuid}/messages")
-    @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해 주세요.")
-    public ApiResponse<Object> getChatMessages(
-        @PathVariable(name = "chatroomUuid") String chatroomUuid,
-        @RequestParam(name = "page") Integer page
-    ) {
-        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
-        Page<Chat> chatMessages = chatQueryService.getChatMessages(chatroomUuid, member, page - 1);
-
-        return ApiResponse.onSuccess(ChatConverter.toChatMessageListDto(chatMessages));
-    }
+//    @Operation(summary = "채팅 내역 조회 API", description = "특정 채팅방의 메시지 내역을 조회하는 API 입니다.")
+//    @GetMapping("/chat/{chatroomUuid}/messages")
+//    @Parameter(name = "page", description = "페이지 번호, 1 이상의 숫자를 입력해 주세요.")
+//    public ApiResponse<Object> getChatMessages(
+//        @PathVariable(name = "chatroomUuid") String chatroomUuid,
+//        @RequestParam(name = "page") Integer page
+//    ) {
+//        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
+//        Page<Chat> chatMessages = chatQueryService.getChatMessages(chatroomUuid, member, page - 1);
+//
+//        return ApiResponse.onSuccess(ChatConverter.toChatMessageListDto(chatMessages));
+//    }
 
     @Operation(summary = "채팅방 입장 API", description = "특정 채팅방에 입장하는 API 입니다. 채팅 상대의 id, 프로필 이미지, 닉네임을 리턴합니다.")
     @GetMapping("/chat/{chatroomUuid}")
@@ -120,4 +120,18 @@ public class ChatController {
         return ApiResponse.onSuccess(allChatroomMessage);
     }
 
+
+    @Operation(summary = "채팅 내역 조회 API", description = "특정 채팅방의 메시지 내역을 조회하는 API 입니다.")
+    @GetMapping("/chat/{chatroomUuid}/messages")
+    @Parameter(name = "cursor", description = "페이징을 위한 커서, ISO-8601 형식의 문자열을 base64 인코딩 해 보내주세요.")
+    public ApiResponse<Object> getChatMessages(
+        @PathVariable(name = "chatroomUuid") String chatroomUuid,
+        @RequestParam(name = "cursor") String cursor
+    ) {
+        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
+        Slice<Chat> chatMessages = chatQueryService.getChatMessagesByCursor(chatroomUuid, member,
+            cursor);
+
+        return ApiResponse.onSuccess(ChatConverter.toChatMessageListDto(chatMessages));
+    }
 }
