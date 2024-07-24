@@ -4,6 +4,7 @@ import example.com.chat.domain.Chat;
 import example.com.chat.domain.Chatroom;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,4 +34,6 @@ public interface ChatRepository extends JpaRepository<Chat, Long>, ChatRepositor
         +
         "AND c.createdAt > (SELECT mc.lastViewDateTime FROM MemberChatroom mc WHERE mc.id = :memberChatroomId)")
     List<Chat> findUnreadChats(@Param("memberChatroomId") Long memberChatroomId);
+
+    Optional<Chat> findByChatroomAndTimestamp(Chatroom chatroom, Long timestamp);
 }

@@ -34,6 +34,7 @@ public class ChatConverter {
             .senderName(chat.getFromMember().getName())
             .message(chat.getContents())
             .createdAt(createdAtIoString)
+            .timestamp(chat.getTimestamp())
             .build();
     }
 

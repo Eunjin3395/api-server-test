@@ -126,12 +126,25 @@ public class ChatController {
     @Parameter(name = "cursor", description = "페이징을 위한 커서, ISO-8601 형식의 문자열을 base64 인코딩 해 보내주세요.")
     public ApiResponse<Object> getChatMessages(
         @PathVariable(name = "chatroomUuid") String chatroomUuid,
-        @RequestParam(name = "cursor") String cursor
+        @RequestParam(name = "cursor", required = false) String cursor
     ) {
         Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
         Slice<Chat> chatMessages = chatQueryService.getChatMessagesByCursor(chatroomUuid, member,
             cursor);
 
         return ApiResponse.onSuccess(ChatConverter.toChatMessageListDto(chatMessages));
+    }
+
+    @Operation(summary = "채팅 메시지 읽음 처리 API", description = "특정 채팅방의 메시지를 읽음 처리하는 API 입니다. 채팅 상대의 id, 프로필 이미지, 닉네임을 리턴합니다.")
+    @GetMapping("/chatroom/{chatroomUuid}/read")
+    @Parameter(name = "timestamp", description = "특정 메시지를 읽음 처리하는 경우, 그 메시지의 timestamp를 함께 보내주세요.")
+    public ApiResponse<String> readChatMessage(
+        @PathVariable(name = "chatroomUuid") String chatroomUuid,
+        @RequestParam(name = "timestamp", required = false) Long timestamp
+    ) {
+        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
+
+        chatCommandService.readChatMessages(chatroomUuid, timestamp, member);
+        return ApiResponse.onSuccess("채팅 메시지 읽음 처리 성공");
     }
 }
