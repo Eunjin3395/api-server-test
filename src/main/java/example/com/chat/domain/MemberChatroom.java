@@ -4,8 +4,6 @@ import example.com.common.domain.BaseDateTimeEntity;
 import example.com.member.domain.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,10 +29,6 @@ public class MemberChatroom extends BaseDateTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_chatroom_id")
     private Long id;
-
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(30)", nullable = false)
-    private ChatroomStatus chatroomStatus;
 
     @Setter
     private LocalDateTime lastViewDate;
