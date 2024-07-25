@@ -12,11 +12,11 @@ public interface ChatRepository extends JpaRepository<Chat, Long>, ChatRepositor
 
     Chat findFirstByChatroomIdOrderByCreatedAtDesc(Long chatroomId);
 
-    @Query("SELECT COUNT(c) FROM Chat c WHERE c.chatroom.id = :chatroomId AND c.fromMember.id != :fromMemberId AND c.createdAt > :lastViewDateTime")
-    Integer countChatsByChatroomIdAndFromMemberIdAfterLastViewDateTime(
+    @Query("SELECT COUNT(c) FROM Chat c WHERE c.chatroom.id = :chatroomId AND c.fromMember.id != :fromMemberId AND c.createdAt > :lastViewDate")
+    Integer countChatsByChatroomIdAndFromMemberIdAfterLastViewDate(
         @Param("chatroomId") Long chatroomId,
         @Param("fromMemberId") Long fromMemberId,
-        @Param("lastViewDateTime") LocalDateTime lastViewDateTime);
-    
+        @Param("lastViewDate") LocalDateTime lastViewDate);
+
     Optional<Chat> findByChatroomAndTimestamp(Chatroom chatroom, Long timestamp);
 }

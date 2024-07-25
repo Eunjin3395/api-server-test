@@ -67,9 +67,9 @@ public class ChatQueryService {
                     chatroom.getId());
 
                 // 내가 읽지 않은 메시지 개수 조회
-                LocalDateTime lastViewDateTime = memberChatroom.getLastViewDateTime();
-                Integer unReadCnt = chatRepository.countChatsByChatroomIdAndFromMemberIdAfterLastViewDateTime(
-                    chatroom.getId(), member.getId(), lastViewDateTime);
+                LocalDateTime lastViewDate = memberChatroom.getLastViewDate();
+                Integer unReadCnt = chatRepository.countChatsByChatroomIdAndFromMemberIdAfterLastViewDate(
+                    chatroom.getId(), member.getId(), lastViewDate);
 
                 // ISO 8601 형식의 문자열로 변환
                 String lastAtIoString = lastChat.getCreatedAt()

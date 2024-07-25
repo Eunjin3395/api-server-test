@@ -37,7 +37,9 @@ public class MemberChatroom extends BaseDateTimeEntity {
     private ChatroomStatus chatroomStatus;
 
     @Setter
-    private LocalDateTime lastViewDateTime;
+    private LocalDateTime lastViewDate;
+
+    private LocalDateTime lastJoinDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -55,7 +57,7 @@ public class MemberChatroom extends BaseDateTimeEntity {
         this.member.getMemberChatroomList().add(this);
     }
 
-    public void updateLastViewDateTime(LocalDateTime lastViewDateTime) {
-        this.lastViewDateTime = lastViewDateTime;
+    public void updateLastViewDate(LocalDateTime lastViewDate) {
+        this.lastViewDate = lastViewDate;
     }
 }

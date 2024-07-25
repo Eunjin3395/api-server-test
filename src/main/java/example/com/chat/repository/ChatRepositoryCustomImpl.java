@@ -140,7 +140,7 @@ public class ChatRepositoryCustomImpl implements ChatRepositoryCustom {
 
     private BooleanExpression createdAtGreaterThanSubQuery(Long memberChatroomId) {
         return chat.createdAt.gt(
-            JPAExpressions.select(memberChatroom.lastViewDateTime)
+            JPAExpressions.select(memberChatroom.lastViewDate)
                 .from(memberChatroom)
                 .where(memberChatroom.id.eq(memberChatroomId))
         );

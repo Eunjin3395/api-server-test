@@ -67,7 +67,7 @@ public class ChatCommandService {
         // 나의 MemberChatroom 엔티티
         MemberChatroom memberChatroom = MemberChatroom.builder()
             .chatroomStatus(ChatroomStatus.ACTIVE)
-            .lastViewDateTime(LocalDateTime.now())
+            .lastViewDate(LocalDateTime.now())
             .chatroom(chatroom)
             .build();
         memberChatroom.setMember(member);
@@ -76,7 +76,7 @@ public class ChatCommandService {
         // 상대방의 MemberChatroom 엔티티
         MemberChatroom targetMemberChatroom = MemberChatroom.builder()
             .chatroomStatus(ChatroomStatus.ACTIVE)
-            .lastViewDateTime(null)
+            .lastViewDate(null)
             .chatroom(chatroom)
             .build();
         targetMemberChatroom.setMember(targetMember);
@@ -118,7 +118,7 @@ public class ChatCommandService {
 
         // MemberChatroom의 lastViewDate 업데이트
         Chat savedChat = chatRepository.save(chat);
-        memberChatroom.updateLastViewDateTime(savedChat.getCreatedAt());
+        memberChatroom.updateLastViewDate(savedChat.getCreatedAt());
 
         return savedChat;
     }
@@ -143,15 +143,15 @@ public class ChatCommandService {
 
         // 해당 회원이 퇴장한 채팅방은 아닌지도 나중에 검증 추가하기
 
-        // 해당 채팅방의 lastViewDateTime 업데이트
-        memberChatroom.setLastViewDateTime(LocalDateTime.now());
+        // 해당 채팅방의 lastViewDate 업데이트
+        memberChatroom.setLastViewDate(LocalDateTime.now());
 
         return memberChatroomRepository.findTargetMemberByChatroomIdAndMemberId(chatroom.getId(),
             member.getId());
     }
 
     /**
-     * memberChatroom의 lastViewDateTime을 업데이트
+     * memberChatroom의 lastViewDate을 업데이트
      *
      * @param chatroomUuid
      * @param timestamp
@@ -168,12 +168,12 @@ public class ChatCommandService {
             .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_ACCESS_DENIED));
 
         if (timestamp == null) { // timestamp 파라미터가 넘어오지 않은 경우, lastViewDate를 현재 시각으로 업데이트
-            memberChatroom.setLastViewDateTime(LocalDateTime.now());
+            memberChatroom.setLastViewDate(LocalDateTime.now());
 
         } else { // timestamp 파라미터가 넘어온 경우, lastViewDate를 해당 timestamp의 chat의 createdAt으로 업데이트
             Chat chat = chatRepository.findByChatroomAndTimestamp(chatroom, timestamp)
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_MESSAGE_NOT_FOUND));
-            memberChatroom.setLastViewDateTime(chat.getCreatedAt());
+            memberChatroom.setLastViewDate(chat.getCreatedAt());
         }
     }
 }
