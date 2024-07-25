@@ -9,4 +9,6 @@ public interface ChatRepositoryCustom {
     Slice<Chat> findChatsByCursor(Long cursor, Long chatroomId, Pageable pageable);
 
     Slice<Chat> findRecentChats(Long chatroomId, Long memberChatroomId);
+
+    Integer countUnreadChats(Long chatroomId, Long memberChatroomId);
 }
