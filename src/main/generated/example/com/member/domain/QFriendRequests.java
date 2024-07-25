@@ -11,16 +11,16 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QFriend is a Querydsl query type for Friend
+ * QFriendRequests is a Querydsl query type for FriendRequests
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QFriend extends EntityPathBase<Friend> {
+public class QFriendRequests extends EntityPathBase<FriendRequests> {
 
-    private static final long serialVersionUID = 1746495781L;
+    private static final long serialVersionUID = -1427228663L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QFriend friend = new QFriend("friend");
+    public static final QFriendRequests friendRequests = new QFriendRequests("friendRequests");
 
     public final example.com.common.domain.QBaseDateTimeEntity _super = new example.com.common.domain.QBaseDateTimeEntity(this);
 
@@ -31,30 +31,30 @@ public class QFriend extends EntityPathBase<Friend> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final BooleanPath isLiked = createBoolean("isLiked");
+    public final BooleanPath isApproved = createBoolean("isApproved");
 
     public final QMember toMember;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
-    public QFriend(String variable) {
-        this(Friend.class, forVariable(variable), INITS);
+    public QFriendRequests(String variable) {
+        this(FriendRequests.class, forVariable(variable), INITS);
     }
 
-    public QFriend(Path<? extends Friend> path) {
+    public QFriendRequests(Path<? extends FriendRequests> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QFriend(PathMetadata metadata) {
+    public QFriendRequests(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QFriend(PathMetadata metadata, PathInits inits) {
-        this(Friend.class, metadata, inits);
+    public QFriendRequests(PathMetadata metadata, PathInits inits) {
+        this(FriendRequests.class, metadata, inits);
     }
 
-    public QFriend(Class<? extends Friend> type, PathMetadata metadata, PathInits inits) {
+    public QFriendRequests(Class<? extends FriendRequests> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.fromMember = inits.isInitialized("fromMember") ? new QMember(forProperty("fromMember")) : null;
         this.toMember = inits.isInitialized("toMember") ? new QMember(forProperty("toMember")) : null;

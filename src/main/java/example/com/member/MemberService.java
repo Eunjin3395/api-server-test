@@ -8,11 +8,10 @@ import example.com.member.domain.Member;
 import example.com.member.dto.MemberRequest;
 import example.com.member.repository.FriendRepository;
 import example.com.member.repository.MemberRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +30,8 @@ public class MemberService {
         }
 
         // socialId와 loginType이 일치하는 사용자가 있는지 검증
-        boolean isExist = memberRepository.existsBySocialIdAndLoginType(request.getSocialId(), loginType);
+        boolean isExist = memberRepository.existsBySocialIdAndLoginType(request.getSocialId(),
+            loginType);
         if (isExist) {
             throw new MemberHandler(ErrorStatus.MEMBER_EXISTS);
         }
@@ -42,11 +42,12 @@ public class MemberService {
     }
 
     public Member findMember(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        return memberRepository.findById(memberId)
+            .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
     public List<Friend> getFriends(Member member) {
-        return friendRepository.findAllByFromMemberAndIsFriend(member, true);
+        return friendRepository.findAllByFromMember(member);
     }
 
 

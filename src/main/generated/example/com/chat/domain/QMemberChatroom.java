@@ -33,7 +33,9 @@ public class QMemberChatroom extends EntityPathBase<MemberChatroom> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final DateTimePath<java.time.LocalDateTime> lastViewDateTime = createDateTime("lastViewDateTime", java.time.LocalDateTime.class);
+    public final DateTimePath<java.time.LocalDateTime> lastJoinDate = createDateTime("lastJoinDate", java.time.LocalDateTime.class);
+
+    public final DateTimePath<java.time.LocalDateTime> lastViewDate = createDateTime("lastViewDate", java.time.LocalDateTime.class);
 
     public final example.com.member.domain.QMember member;
 
