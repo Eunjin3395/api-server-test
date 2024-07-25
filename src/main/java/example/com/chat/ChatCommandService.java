@@ -2,7 +2,6 @@ package example.com.chat;
 
 import example.com.chat.domain.Chat;
 import example.com.chat.domain.Chatroom;
-import example.com.chat.domain.ChatroomStatus;
 import example.com.chat.domain.ChatroomType;
 import example.com.chat.domain.MemberChatroom;
 import example.com.chat.dto.ChatRequest;
@@ -66,7 +65,6 @@ public class ChatCommandService {
         // MemberChatroom 엔티티 생성 및 연관관계 매핑
         // 나의 MemberChatroom 엔티티
         MemberChatroom memberChatroom = MemberChatroom.builder()
-            .chatroomStatus(ChatroomStatus.ACTIVE)
             .lastViewDate(LocalDateTime.now())
             .chatroom(chatroom)
             .build();
@@ -75,7 +73,6 @@ public class ChatCommandService {
 
         // 상대방의 MemberChatroom 엔티티
         MemberChatroom targetMemberChatroom = MemberChatroom.builder()
-            .chatroomStatus(ChatroomStatus.ACTIVE)
             .lastViewDate(null)
             .chatroom(chatroom)
             .build();
@@ -105,7 +102,7 @@ public class ChatCommandService {
             .orElseThrow(() -> new ChatHandler(ErrorStatus.CHATROOM_ACCESS_DENIED));
 
         // 해당 회원이 이미 나간 채팅방인지 검증
-        if (memberChatroom.getChatroomStatus().equals(ChatroomStatus.INACTIVE)) {
+        if (memberChatroom.getLastJoinDate() == null) {
             throw new ChatHandler(ErrorStatus.CHATROOM_ACCESS_DENIED);
         }
 

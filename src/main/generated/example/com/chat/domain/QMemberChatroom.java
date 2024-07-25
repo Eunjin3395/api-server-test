@@ -26,8 +26,6 @@ public class QMemberChatroom extends EntityPathBase<MemberChatroom> {
 
     public final QChatroom chatroom;
 
-    public final EnumPath<ChatroomStatus> chatroomStatus = createEnum("chatroomStatus", ChatroomStatus.class);
-
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 

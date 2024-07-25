@@ -2,7 +2,6 @@ package example.com.chat;
 
 import example.com.chat.domain.Chat;
 import example.com.chat.domain.Chatroom;
-import example.com.chat.domain.ChatroomStatus;
 import example.com.chat.domain.MemberChatroom;
 import example.com.chat.dto.ChatResponse;
 import example.com.chat.repository.ChatRepository;
@@ -11,7 +10,6 @@ import example.com.chat.repository.MemberChatroomRepository;
 import example.com.common.apiPayload.code.status.ErrorStatus;
 import example.com.common.apiPayload.exception.handler.ChatHandler;
 import example.com.member.domain.Member;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,9 +49,9 @@ public class ChatQueryService {
      */
     @Transactional(readOnly = true)
     public List<ChatResponse.ChatroomViewDto> getChatroomList(Member member) {
-        // 현재 ACTIVE한 memberChatroom을 각 memberChatroom에 속한 chat의 마지막 createdAt 기준 최신순으로 정렬해 조회
-        List<MemberChatroom> activeMemberChatroom = memberChatroomRepository.findByMemberIdAndChatroomStatusOrderByLastChatCreatedAtDesc(
-            member.getId(), ChatroomStatus.ACTIVE);
+        // 현재 참여중인 memberChatroom을 각 memberChatroom에 속한 chat의 마지막 createdAt 기준 desc 정렬해 조회
+        List<MemberChatroom> activeMemberChatroom = memberChatroomRepository.findActiveMemberChatroomOrderByLastChat(
+            member.getId());
 
         List<ChatResponse.ChatroomViewDto> chatroomViewDtoList = activeMemberChatroom.stream()
             .map(memberChatroom -> {
