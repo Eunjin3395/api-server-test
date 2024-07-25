@@ -34,7 +34,6 @@ public class ChatController {
     private final MemberService memberService;
     private final ChatCommandService chatCommandService;
     private final ChatQueryService chatQueryService;
-    // private final SocketService socketService;
 
     @Operation(summary = "채팅방 uuid 조회 API", description = "회원이 속한 채팅방의 uuid를 조회하는 API 입니다.")
     @GetMapping("/member/chatroom/uuid")
@@ -82,31 +81,9 @@ public class ChatController {
     ) {
         Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
         Member targetMember = chatCommandService.enterChatroom(chatroomUuid, member);
-        // socketService.notifyChatroomEntered(member.getId(), chatroomUuid);
 
         return ApiResponse.onSuccess(ChatConverter.toChatroomEnterResultDto(targetMember));
     }
-
-//    @Operation(summary = "모든 채팅방의 최근 20개 채팅 내역 조회 API", description = "해당 회원이 속한 모든 채팅방의 최근 20개 채팅 내역을 조회하는 API 입니다.")
-//    @GetMapping("/member/chatroom/messages")
-//    public ApiResponse<List<ChatResponse.ChatroomMessageDto>> getAllChatroomAndMsg() {
-//        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
-//        List<ChatResponse.ChatroomMessageDto> allChatroomMessage = chatQueryService.getAllChatroomMessage(
-//            member);
-//
-//        return ApiResponse.onSuccess(allChatroomMessage);
-//    }
-
-//    @Operation(summary = "모든 채팅방의 읽지 않은 메시지 조회 API", description = "해당 회원이 속한 모든 채팅방의 읽지 않은 메시지 모두를 조회하는 API 입니다.")
-//    @GetMapping("/member/chatroom/messages/unread")
-//    public ApiResponse<List<ChatResponse.ChatroomMessageDto>> getAllUnreadChat() {
-//        Member member = memberService.findMember(SecurityUtil.getCurrentMemberId());
-//        List<ChatResponse.ChatroomMessageDto> allChatroomMessage = chatQueryService.getAllUnreadMessage(
-//            member);
-//
-//        return ApiResponse.onSuccess(allChatroomMessage);
-//    }
-
 
     @Operation(summary = "채팅 내역 조회 API", description = "특정 채팅방의 메시지 내역을 조회하는 API 입니다.\n\n" +
         "cursor 파라미터를 보내면, 해당 timestamp 이전에 전송된 메시지 최대 20개를 조회합니다.\n\n" +
@@ -124,7 +101,7 @@ public class ChatController {
         return ApiResponse.onSuccess(ChatConverter.toChatMessageListDto(chatMessages));
     }
 
-    @Operation(summary = "채팅 메시지 읽음 처리 API", description = "특정 채팅방의 메시지를 읽음 처리하는 API 입니다. 채팅 상대의 id, 프로필 이미지, 닉네임을 리턴합니다.")
+    @Operation(summary = "채팅 메시지 읽음 처리 API", description = "특정 채팅방의 메시지를 읽음 처리하는 API 입니다.")
     @GetMapping("/chatroom/{chatroomUuid}/read")
     @Parameter(name = "timestamp", description = "특정 메시지를 읽음 처리하는 경우, 그 메시지의 timestamp를 함께 보내주세요.")
     public ApiResponse<String> readChatMessage(
